@@ -197,11 +197,16 @@ public class DependencyDownloader extends AbstractXmlParser {
         for (Repository repo : repositories) {
             try {
                 repo.downloadFile(dependency, pom);
-                repo.downloadFile(dependency, jar);
                 e = null;
-                break;
             } catch (Exception ex) {
                 e = new IOException(String.format("Unable to find download for %s (%s)", dependency, repo.getUrl()), ex);
+            }
+            // 一些特殊的依赖项，仅用作引入依赖,比如 org.graalvm.polyglot:python-community
+            try {
+                repo.downloadFile(dependency, jar);
+                break;
+            } catch (Exception ex) {
+
             }
         }
         // 如果存在异常，则抛出
